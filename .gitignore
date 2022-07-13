@@ -1,0 +1,10 @@
+node_modules
+build
+node_modules/
+public/build/
+public/vendor/
+.DS_Store
+dist/
+testdata/
+viewer/media
+*.mp4

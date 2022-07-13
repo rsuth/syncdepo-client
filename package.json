@@ -1,0 +1,93 @@
+{
+  "name": "syncdepo",
+  "author": "Rick Sutherland",
+  "build": {
+    "appId": "com.deposync.deposyncclient",
+    "productName": "SyncDepo",
+    "copyright": "Copyright © 2022 Rick Sutherland",
+    "fileAssociations": {
+      "ext": "syncd"
+    },
+    "files": [
+      "!README.md",
+      "!src/**/*",
+      "!rollup.config.js",
+      "node_modules/ffmpeg-static-electron/bin/${os}/${arch}/ffmpeg",
+      "node_modules/ffmpeg-static-electron/index.js",
+      "node_modules/ffmpeg-static-electron/package.json",
+      "node_modules/ffprobe-static-electron/bin/${os}/${arch}/ffprobe",
+      "node_modules/ffprobe-static-electron/index.js",
+      "node_modules/ffprobe-static-electron/package.json"
+    ],
+    "mac": {
+      "files": [
+        "!README.md",
+        "!src/**/*",
+        "!rollup.config.js",
+        "!node_modules/ffmpeg-static-electron/bin/win${/*}",
+        "!node_modules/ffmpeg-static-electron/bin/linux${/*}",
+        "!node_modules/ffprobe-static-electron/bin/win${/*}",
+        "!node_modules/ffprobe-static-electron/bin/linux${/*}"
+      ]
+    },
+    "win": {
+      "files": [
+        "!README.md",
+        "!src/**/*",
+        "!rollup.config.js",
+        "electron/*",
+        "public/**/*",
+        "!node_modules/ffmpeg-static-electron/bin/mac${/*}",
+        "!node_modules/ffmpeg-static-electron/bin/linux${/*}",
+        "!node_modules/ffprobe-static-electron/bin/mac${/*}",
+        "!node_modules/ffprobe-static-electron/bin/linux${/*}"
+      ]
+    },
+    "asarUnpack": [
+      "node_modules/ffmpeg-static-electron/bin/${os}/${arch}/ffmpeg",
+      "node_modules/ffmpeg-static-electron/index.js",
+      "node_modules/ffmpeg-static-electron/package.json",
+      "node_modules/ffprobe-static-electron/bin/${os}/${arch}/ffprobe",
+      "node_modules/ffprobe-static-electron/index.js",
+      "node_modules/ffprobe-static-electron/package.json"
+    ]
+  },
+  "version": "1.0.0",
+  "private": true,
+  "main": "./electron/index.js",
+  "scripts": {
+    "package": "npm run build && electron-builder",
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
+    "electron": "^18.0.0",
+    "electron-builder": "^22.14.13",
+    "rollup": "^2.3.4",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.0.0",
+    "rollup-plugin-terser": "^7.0.0",
+    "sirv-cli": "^2.0.0",
+    "sv-bootstrap-dropdown": "^0.4.4",
+    "svelte": "^3.0.0",
+    "svelte-toggle": "^3.1.0",
+    "svelte-virtual-list-ce": "^3.1.0-beta.2"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.2",
+    "axios": "^0.25.0",
+    "bootstrap": "^5.1.3",
+    "electron-store": "^8.0.1",
+    "ffmpeg-static-electron": "^2.0.3",
+    "ffprobe-static-electron": "^2.0.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "form-data": "^4.0.0",
+    "hotkeys-js": "^3.8.7",
+    "node-fetch": "^2.6.7"
+  }
+}
