@@ -7,6 +7,13 @@ export const toFixedNumber = function (num, digits, base) {
   return Math.round(num * pow) / pow;
 };
 
+function uuid4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var rnd = Math.random() * 16 | 0, v = c === 'x' ? rnd : (rnd & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 export const getElementHeight = function (element) {
   return parseFloat(getComputedStyle(element).height.replace("px", ""));
 };
@@ -170,6 +177,131 @@ export const createTimeStampTxt = (syncdata) => {
     }
   }
   return txt;
+}
+
+export const createOpenDVTXML = (syncdata) => {
+  // create OpenDVT XML string from syncdata
+  var doc = document.implementation.createDocument("", "", null);
+  var root = doc.createElement("OpenDVT");
+  setAttributes(root, {
+    'UUID': `{${uuid4()}}`,
+    'ShortID': buildDefaultName(syncdata, ""),
+    'Type': "Deposition",
+    'Version': "1.4"
+  })
+  var information = doc.createElement("Information");
+  setAttributes(information, {})
+
+  var deponent = doc.createElement("Deponent");
+
+  var firstname = doc.createElement("FirstName");
+  firstname.appendChild(doc.createTextNode(syncdata.first_name));
+
+  var middleInitial = doc.createElement("MiddleInitial");
+  middleInitial.appendChild(doc.createTextNode(syncdata.middle_name.charAt(0) || ""));
+
+  var lastname = doc.createElement("LastName");
+  lastname.appendChild(doc.createTextNode(syncdata.last_name));
+
+  deponent.appendChild(firstname);
+  deponent.appendChild(middleInitial);
+  deponent.appendChild(lastname);
+
+  var firstPageNo = doc.createElement("FirstPageNo");
+  firstPageNo.appendChild(doc.createTextNode(syncdata.lines[0].page_number));
+
+  var lastPageNo = doc.createElement("LastPageNo");
+  lastPageNo.appendChild(doc.createTextNode(syncdata.lines[syncdata.lines.length - 1].page_number));
+
+  var maxLinesPerPage = doc.createElement("MaxLinesPerPage");
+  maxLinesPerPage.appendChild(doc.createTextNode(syncdata.lines_per_page));
+
+  var volume = doc.createElement("Volume");
+  volume.appendChild(doc.createTextNode("1"));
+
+  var takenon = doc.createElement("TakenOn");
+  takenon.appendChild(doc.createTextNode(syncdata.date));
+
+  information.appendChild(deponent);
+  information.appendChild(firstPageNo);
+  information.appendChild(lastPageNo);
+  information.appendChild(maxLinesPerPage);
+  information.appendChild(volume);
+  information.appendChild(takenon);
+
+  var lines = doc.createElement("Lines");
+  setAttributes(lines, { 'Count': `${syncdata.lines.length}` });
+  for (let i = 0; i < syncdata.lines.length; i++) {
+    var line = doc.createElement("Line");
+    setAttributes(line, { "ID": "${i}" });
+
+    var stream = doc.createElement("Stream");
+    stream.appendChild(doc.createTextNode("0"));
+
+    var timeMs = doc.createElement("TimeMs");
+    timeMs.appendChild(doc.createTextNode(Math.round(syncdata.lines[i].start * 1000)));
+
+    var pageNo = doc.createElement("PageNo");
+    pageNo.appendChild(doc.createTextNode(syncdata.lines[i].page_number));
+
+    var lineNo = doc.createElement("LineNo");
+    lineNo.appendChild(doc.createTextNode(syncdata.lines[i].line_number));
+
+    var qa = doc.createElement("QA");
+    qa.appendChild(doc.createTextNode("-"));
+
+    var text = doc.createElement("Text");
+    text.appendChild(doc.createTextNode(syncdata.lines[i].text));
+
+    line.appendChild(stream);
+    line.appendChild(timeMs);
+    line.appendChild(pageNo);
+    line.appendChild(lineNo);
+    line.appendChild(qa);
+    line.appendChild(text);
+    lines.appendChild(line);
+  }
+
+  var streams = doc.createElement("Streams");
+  setAttributes(streams, { 'Count': "1" });
+
+  var stream = doc.createElement("Stream");
+  setAttributes(stream, { "ID": "0" });
+
+  var uri = doc.createElement("URI");
+  uri.appendChild(doc.createTextNode(`D:\\Media\\${buildDefaultName(syncdata, ".mp4")}`));
+
+  var uriRelative = doc.createElement("URIRelative");
+  uriRelative.appendChild(doc.createTextNode(`\\Media${buildDefaultName(syncdata, ".mp4")}`));
+
+  var volumeID = doc.createElement("VolumeID");
+  volumeID.appendChild(doc.createTextNode(buildDefaultName(syncdata, "")));
+
+  var FileSize = doc.createElement("FileSize");
+  FileSize.appendChild(doc.createTextNode("2959985856"));
+
+  var DurationMs = doc.createElement("DurationMs");
+  DurationMs.appendChild(doc.createTextNode(Math.round(syncdata.duration * 1000)));
+
+  var volumeLabel = doc.createElement("VolumeLabel");
+  volumeLabel.appendChild(doc.createTextNode(buildDefaultName(syncdata, "")));
+
+  stream.append(uri);
+  stream.append(uriRelative);
+  stream.append(volumeID);
+  stream.append(FileSize);
+  stream.append(DurationMs);
+  stream.append(volumeLabel);
+  streams.appendChild(stream);
+
+  root.appendChild(information);
+  root.appendChild(lines);
+  root.appendChild(streams);
+
+  doc.appendChild(root);
+
+  var xmlString = new XMLSerializer().serializeToString(doc);
+  return xmlString;
 }
 
 export const createOncueXML = (syncData) => {
@@ -365,7 +497,7 @@ export const createTrialBinderXML = (syncData) => {
       </Layout>
       <Text>
         <Speech Type="Other">${text}
-        </Speech>;
+        </Speech>
       </Text>
     </Body>
   </Transcript>

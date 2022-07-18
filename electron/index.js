@@ -4,6 +4,15 @@ const { join, dirname } = require('path');
 const ffmpegStatic = require('ffmpeg-static-electron');
 const ffmpeg = require('fluent-ffmpeg');
 
+require('update-electron-app')({
+  repo: 'rsuth/syndepo-client',
+  updateInterval: '1 hour',
+}
+);
+const log = require('electron-log');
+
+log.info('starting syncdepo client');
+
 const ffmpegStaticPath = ffmpegStatic.path.replace(
   'app.asar',
   'app.asar.unpacked'
@@ -17,7 +26,6 @@ const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 const Store = require('electron-store');
-const { electron } = require('process');
 
 const localStore = new Store();
 
@@ -50,7 +58,7 @@ function main() {
     }
   });
   window.loadFile(join(__dirname, "../public/index.html"));
-  //window.removeMenu();
+  window.removeMenu();
   window.on('ready-to-show', window.show);
   if (isDev) window.webContents.openDevTools();
 }
@@ -271,6 +279,7 @@ async function getNewToken() {
 
 async function sendJob(event, job) {
   console.log('sending job to ' + API_SERVER_BASE_URL + "/jobs");
+  log.info('New Job - sending to syncdepo server');
   // would really like to do this in the render process
   // but its working
   const wavFile = fs.createReadStream(job.wavPath);
@@ -278,10 +287,12 @@ async function sendJob(event, job) {
   let fd = new FormData();
   fd.append('first_name', job.firstName);
   fd.append('last_name', job.lastName);
+  fd.append('middle_initial', job.middleInitial);
   fd.append('date_taken', job.date);
   fd.append('start_page', job.startPg);
   fd.append('user_media_path', job.userMediaPath);
-  fd.append('lines_per_page', job.linesPerPage)
+  fd.append('lines_per_page', job.linesPerPage);
+  fd.append('mediaFileSize', job.mediaFileSize);
   fd.append('media', wavFile, "a.wav");
   fd.append('txt', txtFile, "t.txt");
 
@@ -298,6 +309,7 @@ async function sendJob(event, job) {
     return response.data;
 
   } catch (err) {
+    log.error('Error sending job to syncdepo server', err.response.data);
     if (err.response.status === 401) {
       console.log('got 401, getting new access token');
       // token probably expired - try to refresh
@@ -327,6 +339,9 @@ ipcMain.handle('openExternalURL', (event, url) => {
 })
 
 function convertVideoToWav(videoPath) {
+  log.info(
+    `converting video to wav: ${videoPath}`
+  )
   let wavPath = join(app.getPath('temp'), 'a.wav');
   return new Promise((resolve, reject) => {
     ffmpeg(videoPath)

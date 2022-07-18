@@ -6,8 +6,9 @@
     buildDefaultName,
     createTimeStampTxt,
     createTrialBinderXML,
+    createOpenDVTXML,
   } from "./utils";
-  import { createEventDispatcher } from "svelte";
+
   import { footerMessage } from "./stores";
 
   import Dropdown from "sv-bootstrap-dropdown";
@@ -19,8 +20,6 @@
   let dropdownTrigger;
   let showModal = false;
   let modalMessage = undefined;
-
-  console.log(createTrialBinderXML(currentlyOpenSync));
 
   const handleViewerExport = () => {
     let dep = {
@@ -63,6 +62,10 @@
       modalMessage = "Creating Oncue .xml File...";
       out = createOncueXML(currentlyOpenSync);
       ext = ".xml";
+    } else if (type === "dvt") {
+      modalMessage = "Creating OpenDVT File...";
+      out = createOpenDVTXML(currentlyOpenSync);
+      ext = ".dvt";
     } else if (type === "txt") {
       modalMessage = "Creating Timestamped text file...";
       out = createTimeStampTxt(currentlyOpenSync);
@@ -132,6 +135,14 @@
           }}
           class="dropdown-item"
           type="button">Oncue (.xml) File</a
+        >
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a
+          on:click={() => {
+            handleExport("dvt");
+          }}
+          class="dropdown-item"
+          type="button">OpenDVT (.dvt) File</a
         >
         <!-- svelte-ignore a11y-missing-attribute -->
         <a

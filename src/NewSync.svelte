@@ -12,11 +12,13 @@
   let startPg = 1;
   let firstName;
   let lastName;
+  let middleInitial = "";
   let date;
   let state = "Waiting";
   let txtContent;
   let linesPerPage = 25;
   let uploadPercentage = 0;
+  let mediaFileSize = 0;
 
   const handleTxtFileSelection = (e) => {
     error = "";
@@ -29,7 +31,6 @@
           e.target.value = null;
         } else {
           txtContent = content;
-          console.log(txtContent);
           if (findWitnessName(txtContent)) {
             firstName = findWitnessName(txtContent).first;
             lastName = findWitnessName(txtContent).last;
@@ -46,6 +47,7 @@
     error = "";
     state = "Processing...";
     if (mediaFile && mediaFile[0]) {
+      mediaFileSize = mediaFile[0].size;
       try {
         wavPath = await window.api.ConvertToWav(mediaFile[0].path);
       } catch (err) {
@@ -55,8 +57,8 @@
       state = "Uploading...";
       try {
         let sendJobResponse = await sendJob();
-        if (sendJobResponse.error) {
-          error = sendJobResponse.error.message;
+        if (sendJobResponse.detail.error) {
+          error = sendJobResponse.detail.error.message;
           state = "Waiting";
         } else {
           dispatch("goto-jobs-table");
@@ -64,6 +66,7 @@
       } catch (err) {
         error = err;
         console.log(err);
+        state = "Waiting";
       }
     }
   };
@@ -74,10 +77,12 @@
     job.txtPath = txtFile.path;
     job.firstName = firstName;
     job.lastName = lastName;
+    job.middleInitial = middleInitial;
     job.date = date;
     job.startPg = startPg;
     job.userMediaPath = mediaFile[0].path;
     job.linesPerPage = linesPerPage;
+    job.mediaFileSize = mediaFileSize;
     return window.api.SendJob(job);
   };
 </script>
@@ -127,6 +132,13 @@
             placeholder="First"
             name="firstName"
             required
+          />
+          <input
+            bind:value={middleInitial}
+            type="text"
+            class="form-control"
+            placeholder="MI"
+            name="middleInitial"
           />
           <input
             bind:value={lastName}
