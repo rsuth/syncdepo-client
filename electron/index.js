@@ -3,13 +3,13 @@ const { AUTH_SERVER_BASE_URL, API_SERVER_BASE_URL } = require('./config');
 const { join, dirname } = require('path');
 const ffmpegStatic = require('ffmpeg-static-electron');
 const ffmpeg = require('fluent-ffmpeg');
-
-require('update-electron-app')({
-  repo: 'rsuth/syndepo-client',
-  updateInterval: '1 hour',
-}
-);
 const log = require('electron-log');
+
+const autoUpdater = require("electron-updater");
+
+app.on("ready", () => {
+  autoUpdater.checkForUpdatesAndNotify();
+});
 
 log.info('starting syncdepo client');
 
