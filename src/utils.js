@@ -198,7 +198,7 @@ export const createOpenDVTXML = (syncdata) => {
   firstname.appendChild(doc.createTextNode(syncdata.first_name));
 
   var middleInitial = doc.createElement("MiddleInitial");
-  middleInitial.appendChild(doc.createTextNode(syncdata.middle_name.charAt(0) || ""));
+  middleInitial.appendChild(doc.createTextNode(syncdata.middle_initial || ""));
 
   var lastname = doc.createElement("LastName");
   lastname.appendChild(doc.createTextNode(syncdata.last_name));

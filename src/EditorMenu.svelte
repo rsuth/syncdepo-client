@@ -5,7 +5,6 @@
     createOncueXML,
     buildDefaultName,
     createTimeStampTxt,
-    createTrialBinderXML,
     createOpenDVTXML,
   } from "./utils";
 
