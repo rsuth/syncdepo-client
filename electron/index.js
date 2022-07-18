@@ -246,7 +246,12 @@ ipcMain.handle("checkFileExists", async (event, path) => {
 });
 
 ipcMain.handle('getRecentFiles', (event) => {
-  return localStore.get('recentFiles').reverse();
+  let recents = localStore.get('recentFiles');
+  if (recents) {
+    return recents.reverse();
+  } else {
+    return [];
+  }
 });
 
 ipcMain.handle("sendJob", async (event, job) => {

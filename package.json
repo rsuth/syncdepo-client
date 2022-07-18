@@ -1,9 +1,15 @@
 {
-  "name": "syncdepo",
+  "name": "syncdepo-client",
   "author": "Rick Sutherland",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsuth/syncdepo-client.git"
+  },
+  "description": "A client for the syncdepo deposition syncing service",
   "build": {
-    "appId": "com.deposync.deposyncclient",
-    "productName": "SyncDepo",
+    "appId": "com.deposync.client",
+    "productName": "SyncDepo Client",
     "copyright": "Copyright © 2022 Rick Sutherland",
     "fileAssociations": {
       "ext": "syncd"
@@ -52,8 +58,7 @@
       "node_modules/ffprobe-static-electron/package.json"
     ]
   },
-  "version": "0.1.0",
-  "private": false,
+  "private": true,
   "main": "./electron/index.js",
   "scripts": {
     "package": "npm run build && electron-builder",
