@@ -49,8 +49,8 @@ app.whenReady().then(main);
 
 function main() {
   window = new BrowserWindow({
-    width: 1200, height: 960, show: false,
-    minHeight: 540,
+    width: 1000, height: 820, show: false,
+    minHeight: 820,
     minWidth: 980,
     autoHideMenuBar: false,
     webPreferences: {
@@ -297,7 +297,7 @@ async function sendJob(event, job) {
   fd.append('start_page', job.startPg);
   fd.append('user_media_path', job.userMediaPath);
   fd.append('lines_per_page', job.linesPerPage);
-  fd.append('mediaFileSize', job.mediaFileSize);
+  fd.append('media_file_size', job.mediaFileSize);
   fd.append('media', wavFile, "a.wav");
   fd.append('txt', txtFile, "t.txt");
 

@@ -57,8 +57,10 @@
       state = "Uploading...";
       try {
         let sendJobResponse = await sendJob();
-        if (sendJobResponse.detail.error) {
-          error = sendJobResponse.detail.error.message;
+        if (sendJobResponse.detail) {
+          if (sendJobResponse.detail.error) {
+            error = sendJobResponse.detail.error.message;
+          }
           state = "Waiting";
         } else {
           dispatch("goto-jobs-table");
