@@ -5,7 +5,7 @@ const ffmpegStatic = require('ffmpeg-static-electron');
 const ffmpeg = require('fluent-ffmpeg');
 const log = require('electron-log');
 
-const autoUpdater = require("electron-updater");
+const { autoUpdater } = require("electron-updater");
 
 app.on("ready", () => {
   autoUpdater.checkForUpdatesAndNotify();
