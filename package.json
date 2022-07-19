@@ -1,7 +1,7 @@
 {
   "name": "syncdepo-client",
   "author": "Rick Sutherland",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rsuth/syncdepo-client.git"
@@ -14,6 +14,13 @@
     "fileAssociations": {
       "ext": "syncd"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "rsuth",
+        "repo": "syncdepo-client"
+      }
+    ],
     "files": [
       "!README.md",
       "!src/**/*",
@@ -62,6 +69,7 @@
   "main": "./electron/index.js",
   "scripts": {
     "package": "npm run build && electron-builder",
+    "publish": "npm run build && electron-builder -p always",
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "electron ."
